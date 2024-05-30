@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FormJadwal</class>
+ <widget class="QWidget" name="FormJadwal">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="formLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>331</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="iDJadwalLabel">
+      <property name="text">
+       <string>ID Jadwal</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="iDJadwalLineEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="tanggalJadwalLabel">
+      <property name="text">
+       <string>Tanggal Jadwal</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QDateEdit" name="tanggalJadwalDateEdit"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="totalLabel">
+      <property name="text">
+       <string>Total Awal</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="totalLineEdit"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="jumlahPakaiLabel">
+      <property name="text">
+       <string>Jumlah Pakai</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="jumlahPakaiLineEdit"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="iDPopulasiLabel">
+      <property name="text">
+       <string>ID Populasi</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="iDPopulasiComboBox"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="kodePakanLabel">
+      <property name="text">
+       <string>Kode Pakan</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="kodePakanComboBox"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="jenisJadwalLabel">
+      <property name="text">
+       <string>Jenis Jadwal</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="jenisJadwalComboBox">
+      <item>
+       <property name="text">
+        <string>Pagi</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sore</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>269</x>
+     <y>250</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Simpan</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>250</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ubah</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_3">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>250</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Hapus</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
