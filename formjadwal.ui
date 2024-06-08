@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>1307</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -143,6 +143,16 @@
    </property>
    <property name="text">
     <string>Hapus</string>
+   </property>
+  </widget>
+  <widget class="QTableView" name="tableJadwal">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>300</y>
+     <width>1261</width>
+     <height>192</height>
+    </rect>
    </property>
   </widget>
  </widget>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>984</width>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,6 +126,16 @@
    </property>
    <property name="text">
     <string>Hapus</string>
+   </property>
+  </widget>
+  <widget class="QTableView" name="tableProduksi">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>280</y>
+     <width>941</width>
+     <height>192</height>
+    </rect>
    </property>
   </widget>
  </widget>

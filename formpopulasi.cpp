@@ -6,8 +6,45 @@ FormPopulasi::FormPopulasi(QWidget *parent)
     , ui(new Ui::FormPopulasi)
 {
     ui->setupUi(this);
+    clearFormInput();
+    loadTabelPopulasi();
 
+}
 
+void FormPopulasi::loadTabelPopulasi()
+{
+    // set table
+    tabelModel = new QSqlQueryModel(this);
+    tabelModel->setQuery("SELECT populasi.id_populasi, populasi.tgl_populasi, populasi.jml_mati, populasi.jml_hidup, populasi.sisa, populasi.kd_kandang, kandang.nama_kandang, kandang.kapasitas FROM populasi INNER JOIN kandang ON populasi.kd_kandang = kandang.kd_kandang ORDER BY populasi.id_populasi ASC");
+    tabelModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID Populasi"));
+    tabelModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Tgl Populasi"));
+    tabelModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Jumlah Mati"));
+    tabelModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Jumlah Hidup"));
+    tabelModel->setHeaderData(4, Qt::Horizontal, QObject::tr("Sisa"));
+    tabelModel->setHeaderData(5, Qt::Horizontal, QObject::tr("Kode Kandang"));
+    tabelModel->setHeaderData(6, Qt::Horizontal, QObject::tr("Nama Kandang"));
+    tabelModel->setHeaderData(7, Qt::Horizontal, QObject::tr("Kapasitas"));
+
+    ui->tablePopulasi->setModel(tabelModel);
+    ui->tablePopulasi->setColumnWidth(0, 100);
+    ui->tablePopulasi->setColumnWidth(1, 100);
+    ui->tablePopulasi->setColumnWidth(2, 100);
+    ui->tablePopulasi->setColumnWidth(3, 100);
+    ui->tablePopulasi->setColumnWidth(4, 100);
+    ui->tablePopulasi->setColumnWidth(5, 100);
+    ui->tablePopulasi->setColumnWidth(6, 150);
+    ui->tablePopulasi->setColumnWidth(7, 100);
+    ui->tablePopulasi->show();
+}
+
+void FormPopulasi::clearFormInput()
+{
+    QDate date = QDate::currentDate();
+    ui->idPopulasiLineEdit->setText("");
+    ui->tanggalPopulasiDateEdit->setDate(date);
+    ui->jumlahHidupLineEdit->setText("");
+    ui->jumlahMatiLineEdit->setText("");
+    ui->sisaLineEdit->setText("");
 }
 
 FormPopulasi::~FormPopulasi()
@@ -62,6 +99,9 @@ void FormPopulasi::on_pushButton_clicked()
     }else{
         qDebug()<<sql.lastError().text();
     }
+
+    clearFormInput();
+    loadTabelPopulasi();
 }
 
 
@@ -94,6 +134,9 @@ void FormPopulasi::on_pushButton_2_clicked()
     }else{
         qDebug()<<sql.lastError().text();
     }
+
+    clearFormInput();
+    loadTabelPopulasi();
 }
 
 
@@ -108,5 +151,25 @@ void FormPopulasi::on_pushButton_3_clicked()
     }else{
         qDebug()<<sql.lastError().text();
     }
+
+    clearFormInput();
+    loadTabelPopulasi();
+}
+
+
+void FormPopulasi::on_tablePopulasi_clicked(const QModelIndex &index)
+{
+    int rowidx = ui->tablePopulasi->selectionModel()->currentIndex().row();
+    QString kdKandang = tabelModel->index(rowidx, 5).data().toString();
+    QString namaKandang = tabelModel->index(rowidx, 6).data().toString();
+    QString kapasitas = tabelModel->index(rowidx, 7).data().toString();
+    QString cmbText = kdKandang+"/"+namaKandang+"/"+kapasitas;
+
+    ui->idPopulasiLineEdit->setText(tabelModel->index(rowidx, 0).data().toString());
+    ui->tanggalPopulasiDateEdit->setDate(tabelModel->index(rowidx, 1).data().toDate());
+    ui->jumlahMatiLineEdit->setText(tabelModel->index(rowidx, 2).data().toString());
+    ui->jumlahHidupLineEdit->setText(tabelModel->index(rowidx, 3).data().toString());
+    ui->sisaLineEdit->setText(tabelModel->index(rowidx, 4).data().toString());
+    ui->kodeKandangComboBox->setCurrentText(cmbText);
 }
 

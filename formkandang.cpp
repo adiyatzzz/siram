@@ -6,7 +6,31 @@ FormKandang::FormKandang(QWidget *parent)
     , ui(new Ui::FormKandang)
 {
     ui->setupUi(this);
+    loadTabelKandang();
 
+}
+
+void FormKandang::loadTabelKandang()
+{
+    // set table
+    tabelModel = new QSqlQueryModel(this);
+    tabelModel->setQuery("SELECT * FROM kandang ORDER BY kd_kandang ASC");
+    tabelModel->setHeaderData(0, Qt::Horizontal, QObject::tr("Kode Kandang"));
+    tabelModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Nama Kandang"));
+    tabelModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Kapasitas"));
+
+    ui->tableKandang->setModel(tabelModel);
+    ui->tableKandang->setColumnWidth(0, 100);
+    ui->tableKandang->setColumnWidth(1, 150);
+    ui->tableKandang->setColumnWidth(2, 100);
+    ui->tableKandang->show();
+}
+
+void FormKandang::clearFormInput()
+{
+    ui->kodeKandangLineEdit->setText("");
+    ui->namaKandangLineEdit->setText("");
+    ui->kapasitasLineEdit->setText("");
 }
 
 FormKandang::~FormKandang()
@@ -27,6 +51,8 @@ void FormKandang::on_pushButton_clicked()
     }else{
         qDebug()<<sql.lastError().text();
     }
+    loadTabelKandang();
+    clearFormInput();
 }
 
 
@@ -43,6 +69,8 @@ void FormKandang::on_pushButton_2_clicked()
     }else{
         qDebug()<<sql.lastError().text();
     }
+    loadTabelKandang();
+    clearFormInput();
 }
 
 
@@ -57,5 +85,15 @@ void FormKandang::on_pushButton_3_clicked()
     }else{
         qDebug()<<sql.lastError().text();
     }
+    loadTabelKandang();
+    clearFormInput();
+}
+
+void FormKandang::on_tableKandang_clicked(const QModelIndex &index)
+{
+    int rowidx = ui->tableKandang->selectionModel()->currentIndex().row();
+    ui->kodeKandangLineEdit->setText(tabelModel->index(rowidx, 0).data().toString());
+    ui->namaKandangLineEdit->setText(tabelModel->index(rowidx, 1).data().toString());
+    ui->kapasitasLineEdit->setText(tabelModel->index(rowidx, 2).data().toString());
 }
 

@@ -7,6 +7,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QDebug>
+#include <QSqlQueryModel>
 
 namespace Ui {
 class FormKandang;
@@ -18,6 +19,8 @@ class FormKandang : public QWidget
 
 public:
     explicit FormKandang(QWidget *parent = nullptr);
+    void loadTabelKandang();
+    void clearFormInput();
     ~FormKandang();
 
 private slots:
@@ -27,9 +30,12 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_tableKandang_clicked(const QModelIndex &index);
+
 private:
     Ui::FormKandang *ui;
     QSqlDatabase koneksiDB;
+    QSqlQueryModel *tabelModel;
 };
 
 #endif // FORMKANDANG_H

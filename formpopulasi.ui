@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>1004</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>30</x>
      <y>30</y>
-     <width>331</width>
-     <height>191</height>
+     <width>377</width>
+     <height>346</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -126,6 +126,16 @@
    </property>
    <property name="text">
     <string>Hapus</string>
+   </property>
+  </widget>
+  <widget class="QTableView" name="tablePopulasi">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>270</y>
+     <width>961</width>
+     <height>192</height>
+    </rect>
    </property>
   </widget>
  </widget>

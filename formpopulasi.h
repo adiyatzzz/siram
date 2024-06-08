@@ -8,6 +8,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QShowEvent>
+#include <QSqlQueryModel>
 
 namespace Ui {
 class FormPopulasi;
@@ -19,6 +20,8 @@ class FormPopulasi : public QWidget
 
 public:
     explicit FormPopulasi(QWidget *parent = nullptr);
+    void loadTabelPopulasi();
+    void clearFormInput();
     ~FormPopulasi();
 
     void showEvent(QShowEvent *event);
@@ -30,9 +33,12 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_tablePopulasi_clicked(const QModelIndex &index);
+
 private:
     Ui::FormPopulasi *ui;
     QSqlDatabase koneksiDB;
+    QSqlQueryModel *tabelModel;
 };
 
 #endif // FORMPOPULASI_H
