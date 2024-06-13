@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QShowEvent>
 #include <QSqlQueryModel>
+#include <formchecker.h>
 
 namespace Ui {
 class FormProduksi;
@@ -39,6 +40,7 @@ private:
     Ui::FormProduksi *ui;
     QSqlDatabase koneksiDB;
     QSqlQueryModel *tabelModel;
+    FormChecker *formChecker;
 };
 
 #endif // FORMPRODUKSI_H

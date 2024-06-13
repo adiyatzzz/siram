@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QShowEvent>
 #include <QSqlQueryModel>
+#include <formchecker.h>
 
 namespace Ui {
 class FormJadwal;
@@ -39,6 +40,7 @@ private:
     Ui::FormJadwal *ui;
     QSqlDatabase koneksiDB;
     QSqlQueryModel *tabelModel;
+    FormChecker *formChecker;
 };
 
 #endif // FORMJADWAL_H

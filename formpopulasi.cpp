@@ -71,6 +71,12 @@ void FormPopulasi::showEvent(QShowEvent *event) {
 
 void FormPopulasi::on_pushButton_clicked()
 {
+    if(formChecker->isFieldEmpty(this, ui->idPopulasiLineEdit, "ID Populasi Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jumlahMatiLineEdit, "Jumlah Mati Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jumlahHidupLineEdit, "Jumlah Hidup Belum Di Isi") ){
+        return;
+    }
+
     QStringList kandangData = ui->kodeKandangComboBox->currentText().split("/");
     QString kd_kandang = kandangData[0];
     int kapasitas = kandangData[2].toInt();
@@ -84,24 +90,50 @@ void FormPopulasi::on_pushButton_clicked()
 
 
     QSqlQuery sql(koneksiDB);
-    sql.prepare("INSERT INTO populasi (id_populasi, tgl_populasi, jml_mati, jml_hidup, sisa, kd_kandang) VALUE(:id_populasi, :tgl_populasi, :jml_mati, :jml_hidup, :sisa, :kd_kandang)");
-    sql.bindValue(":id_populasi", ui->idPopulasiLineEdit->text());
-    sql.bindValue(":tgl_populasi", ui->tanggalPopulasiDateEdit->date());
-    sql.bindValue(":jml_mati", jmlMati);
-    sql.bindValue(":jml_hidup", jmlHidup);
-    sql.bindValue(":sisa", hitungSisa);
-    sql.bindValue(":kd_kandang", kd_kandang);
 
-    ui->sisaLineEdit->setText(QString::number(hitungSisa));
+    sql.prepare("SELECT * FROM populasi WHERE id_populasi = '"+ ui->idPopulasiLineEdit->text() + "'");
+    sql.exec();
 
-    if(sql.exec()){
-        qDebug()<<"Data berhasil di simpan";
-    }else{
-        qDebug()<<sql.lastError().text();
+    if (sql.next()) {
+        QMessageBox::information(this, "Warning", "ID Populasi Sudah Digunakan");
+        ui->idPopulasiLineEdit->setText(sql.value(0).toString());
+        ui->tanggalPopulasiDateEdit->setDate(sql.value(1).toDate());
+        ui->jumlahMatiLineEdit->setText(sql.value(2).toString());
+        ui->jumlahHidupLineEdit->setText(sql.value(3).toString());
+        ui->sisaLineEdit->setText(sql.value(4).toString());
+
+        // cari kode_kandang dan set text ke cmbbox
+        QString cekKodeKandang = sql.value(5).toString();
+        sql.prepare("SELECT * FROM kandang WHERE kd_kandang = '"+ cekKodeKandang + "'");
+        sql.exec();
+        sql.next();
+        QString kdKandang = sql.value(0).toString();
+        QString namaKandang = sql.value(1).toString();
+        QString kapasitas = sql.value(2).toString();
+        QString cmbText = kdKandang+"/"+namaKandang+"/"+kapasitas;
+        ui->kodeKandangComboBox->setCurrentText(cmbText);
+    } else {
+        sql.prepare("INSERT INTO populasi (id_populasi, tgl_populasi, jml_mati, jml_hidup, sisa, kd_kandang) VALUE(:id_populasi, :tgl_populasi, :jml_mati, :jml_hidup, :sisa, :kd_kandang)");
+        sql.bindValue(":id_populasi", ui->idPopulasiLineEdit->text());
+        sql.bindValue(":tgl_populasi", ui->tanggalPopulasiDateEdit->date());
+        sql.bindValue(":jml_mati", jmlMati);
+        sql.bindValue(":jml_hidup", jmlHidup);
+        sql.bindValue(":sisa", hitungSisa);
+        sql.bindValue(":kd_kandang", kd_kandang);
+
+        ui->sisaLineEdit->setText(QString::number(hitungSisa));
+
+        if(sql.exec()){
+            qDebug()<<"Data berhasil di simpan";
+        }else{
+            qDebug()<<sql.lastError().text();
+        }
+
+        clearFormInput();
+        loadTabelPopulasi();
     }
 
-    clearFormInput();
-    loadTabelPopulasi();
+
 }
 
 

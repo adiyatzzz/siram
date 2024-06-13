@@ -7,7 +7,6 @@ FormKandang::FormKandang(QWidget *parent)
 {
     ui->setupUi(this);
     loadTabelKandang();
-
 }
 
 void FormKandang::loadTabelKandang()
@@ -40,19 +39,39 @@ FormKandang::~FormKandang()
 
 void FormKandang::on_pushButton_clicked()
 {
-    QSqlQuery sql(koneksiDB);
-    sql.prepare("INSERT INTO kandang (kd_kandang, nama_kandang, kapasitas) VALUE(:kd_kandang, :nama_kandang, :kapasitas)");
-    sql.bindValue(":kd_kandang", ui->kodeKandangLineEdit->text());
-    sql.bindValue(":nama_kandang", ui->namaKandangLineEdit->text());
-    sql.bindValue(":kapasitas", ui->kapasitasLineEdit->text());
 
-    if(sql.exec()){
-        qDebug()<<"Data berhasil di simpan";
-    }else{
-        qDebug()<<sql.lastError().text();
+    QSqlQuery sql(koneksiDB);
+    if(formChecker->isFieldEmpty(this, ui->kodeKandangLineEdit, "Kode Kandang Belum Diisi") ||
+        formChecker->isFieldEmpty(this, ui->namaKandangLineEdit, "Nama Kandang Belum Diisi") ||
+        formChecker->isFieldEmpty(this, ui->kapasitasLineEdit, "Kapasitas Kandang Belum Diisi") ){
+        return;
     }
-    loadTabelKandang();
-    clearFormInput();
+
+    sql.prepare("SELECT * FROM kandang WHERE kd_kandang = '"+ ui->kodeKandangLineEdit->text() + "'");
+    sql.exec();
+
+    if (sql.next()) {
+        QMessageBox::information(this, "Warning", "Kode Kandang sudah digunakan");
+        ui->kodeKandangLineEdit->setText(sql.value(0).toString());
+        ui->namaKandangLineEdit->setText(sql.value(1).toString());
+        ui->kapasitasLineEdit->setText(sql.value(2).toString());
+    } else {
+        sql.prepare("INSERT INTO kandang (kd_kandang, nama_kandang, kapasitas) VALUE(:kd_kandang, :nama_kandang, :kapasitas)");
+        sql.bindValue(":kd_kandang", ui->kodeKandangLineEdit->text());
+        sql.bindValue(":nama_kandang", ui->namaKandangLineEdit->text());
+        sql.bindValue(":kapasitas", ui->kapasitasLineEdit->text());
+
+        if(sql.exec()){
+            qDebug()<<"Data berhasil di simpan";
+        }else{
+            qDebug()<<sql.lastError().text();
+        }
+
+        loadTabelKandang();
+        clearFormInput();
+    }
+
+
 }
 
 
@@ -96,4 +115,5 @@ void FormKandang::on_tableKandang_clicked(const QModelIndex &index)
     ui->namaKandangLineEdit->setText(tabelModel->index(rowidx, 1).data().toString());
     ui->kapasitasLineEdit->setText(tabelModel->index(rowidx, 2).data().toString());
 }
+
 

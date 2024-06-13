@@ -8,6 +8,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QSqlQueryModel>
+#include <formchecker.h>
 
 namespace Ui {
 class FormKandang;
@@ -36,6 +37,7 @@ private:
     Ui::FormKandang *ui;
     QSqlDatabase koneksiDB;
     QSqlQueryModel *tabelModel;
+    FormChecker *formChecker;
 };
 
 #endif // FORMKANDANG_H

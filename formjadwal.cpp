@@ -92,29 +92,71 @@ void FormJadwal::showEvent(QShowEvent *event) {
 
 void FormJadwal::on_pushButton_clicked()
 {
+    if(formChecker->isFieldEmpty(this, ui->iDJadwalLineEdit, "ID Jadwal Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->totalLineEdit, "Total Awal Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jumlahPakaiLineEdit, "Jumlah Pakai Belum Di Isi") ){
+        return;
+    }
+
     QStringList populasiData = ui->iDPopulasiComboBox->currentText().split("/");
     QString id_populasi = populasiData[0];
     QStringList pakanData = ui->kodePakanComboBox->currentText().split("/");
     QString kd_pakan = pakanData[0];
 
     QSqlQuery sql(koneksiDB);
-    sql.prepare("INSERT INTO jadwal (id_jadwal, tgl_jadwal, jenis, total, jml, id_populasi, kd_pakan) VALUE(:id_jadwal, :tgl_jadwal, :jenis, :total, :jml, :id_populasi, :kd_pakan)");
-    sql.bindValue(":id_jadwal", ui->iDJadwalLineEdit->text());
-    sql.bindValue(":tgl_jadwal", ui->tanggalJadwalDateEdit->date());
-    sql.bindValue(":jenis", ui->jenisJadwalComboBox->currentText());
-    sql.bindValue(":total", ui->totalLineEdit->text());
-    sql.bindValue(":jml", ui->jumlahPakaiLineEdit->text());
-    sql.bindValue(":id_populasi", id_populasi);
-    sql.bindValue(":kd_pakan", kd_pakan);
+    sql.prepare("SELECT * FROM jadwal WHERE id_jadwal = '"+ ui->iDJadwalLineEdit->text() + "'");
+    sql.exec();
+    if(sql.next()){
+        QMessageBox::information(this, "Warning", "ID Jadwal Sudah Digunakan");
+        ui->iDJadwalLineEdit->setText(sql.value(0).toString());
+        ui->tanggalJadwalDateEdit->setDate(sql.value(1).toDate());
+        ui->jenisJadwalComboBox->setCurrentText(sql.value(2).toString());
+        ui->totalLineEdit->setText(sql.value(3).toString());
+        ui->jumlahPakaiLineEdit->setText(sql.value(4).toString());
 
-    if(sql.exec()){
-        qDebug()<<"Data berhasil di simpan";
+        // cari id populasi dan set text ke cmbbox
+        QString cekIdPopulasi = sql.value(5).toString();
+        QString cekKodePakan = sql.value(6).toString();
+
+        sql.prepare("SELECT * FROM populasi WHERE id_populasi = '"+ cekIdPopulasi + "'");
+        sql.exec();
+        sql.next();
+        QString idPopulasi = sql.value(0).toString();
+        QString tglPopulasi = sql.value(1).toString();
+        QString jmlHidup = sql.value(3).toString();
+        QString cmbPopulasi = idPopulasi+"/"+tglPopulasi+"/"+jmlHidup;
+        ui->iDPopulasiComboBox->setCurrentText(cmbPopulasi);
+
+        // cari kd pakan dan set text ke cmbbox
+
+        sql.prepare("SELECT * FROM pakan WHERE kd_pakan = '"+ cekKodePakan + "'");
+        sql.exec();
+        sql.next();
+        QString kd_pakan = sql.value(0).toString();
+        QString nama_pakan = sql.value(1).toString();
+        QString jenis_pakan = sql.value(2).toString();
+        QString jml_pakan = sql.value(3).toString();
+        QString cmbPakan = kd_pakan+"/"+nama_pakan+"/"+jenis_pakan+"/"+jml_pakan+" Kg";
+        ui->kodePakanComboBox->setCurrentText(cmbPakan);
     }else{
-        qDebug()<<sql.lastError().text();
-    }
+        sql.prepare("INSERT INTO jadwal (id_jadwal, tgl_jadwal, jenis, total, jml, id_populasi, kd_pakan) VALUE(:id_jadwal, :tgl_jadwal, :jenis, :total, :jml, :id_populasi, :kd_pakan)");
+        sql.bindValue(":id_jadwal", ui->iDJadwalLineEdit->text());
+        sql.bindValue(":tgl_jadwal", ui->tanggalJadwalDateEdit->date());
+        sql.bindValue(":jenis", ui->jenisJadwalComboBox->currentText());
+        sql.bindValue(":total", ui->totalLineEdit->text());
+        sql.bindValue(":jml", ui->jumlahPakaiLineEdit->text());
+        sql.bindValue(":id_populasi", id_populasi);
+        sql.bindValue(":kd_pakan", kd_pakan);
 
-    clearFormInput();
-    loadTabelJadwal();
+        if(sql.exec()){
+            qDebug()<<"Data berhasil di simpan";
+        }else{
+            qDebug()<<sql.lastError().text();
+        }
+
+        clearFormInput();
+        loadTabelJadwal();
+    }
 }
 
 

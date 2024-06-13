@@ -76,6 +76,12 @@ void FormProduksi::showEvent(QShowEvent *event) {
 
 void FormProduksi::on_pushButton_clicked()
 {
+    if(formChecker->isFieldEmpty(this, ui->iDProduksiLineEdit, "ID Produksi Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jumlahUtuhLineEdit, "Jumlah Utuh Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jumlahRetakLineEdit, "Jumlah Retak Belum Di Isi") ){
+        return;
+    }
+
     QStringList populasiData = ui->iDPopulasiComboBox->currentText().split("/");
     QString id_populasi = populasiData[0];
     int jmlUtuh = ui->jumlahUtuhLineEdit->text().toInt();
@@ -83,24 +89,49 @@ void FormProduksi::on_pushButton_clicked()
     int total = jmlUtuh + jmlRetak;
 
     QSqlQuery sql(koneksiDB);
-    sql.prepare("INSERT INTO produksi (id_produksi, tgl_produksi, jml_utuh, jml_retak, total, id_populasi) VALUE (:id_produksi, :tgl_produksi, :jml_utuh, :jml_retak, :total, :id_populasi)");
-    sql.bindValue(":id_produksi", ui->iDProduksiLineEdit->text());
-    sql.bindValue(":tgl_produksi", ui->tanggalProduksiDateEdit->date());
-    sql.bindValue(":jml_utuh", jmlUtuh);
-    sql.bindValue(":jml_retak", jmlRetak);
-    sql.bindValue(":total", total);
-    sql.bindValue(":id_populasi", id_populasi);
 
-    ui->totalLineEdit->setText(QString::number(total));
+    sql.prepare("SELECT * FROM produksi WHERE id_produksi = '"+ ui->iDProduksiLineEdit->text() + "'");
+    sql.exec();
 
-    if(sql.exec()){
-        qDebug()<<"Data berhasil di simpan";
+    if(sql.next()){
+        QMessageBox::information(this, "Warning", "ID Produksi Sudah Digunakan");
+        ui->iDProduksiLineEdit->setText(sql.value(0).toString());
+        ui->tanggalProduksiDateEdit->setDate(sql.value(1).toDate());
+        ui->jumlahUtuhLineEdit->setText(sql.value(2).toString());
+        ui->jumlahRetakLineEdit->setText(sql.value(3).toString());
+        ui->totalLineEdit->setText(sql.value(4).toString());
+
+        // cari id populasi dan set text ke cmbbox
+        QString cekIdPopulasi = sql.value(5).toString();
+        sql.prepare("SELECT * FROM populasi WHERE id_populasi = '"+ cekIdPopulasi + "'");
+        sql.exec();
+        sql.next();
+        QString idPopulasi = sql.value(0).toString();
+        QString tglPopulasi = sql.value(1).toString();
+        QString jmlHidup = sql.value(3).toString();
+        QString cmbText = idPopulasi+"/"+tglPopulasi+"/"+jmlHidup;
+        ui->iDPopulasiComboBox->setCurrentText(cmbText);
     }else{
-        qDebug()<<sql.lastError().text();
+        sql.prepare("INSERT INTO produksi (id_produksi, tgl_produksi, jml_utuh, jml_retak, total, id_populasi) VALUE (:id_produksi, :tgl_produksi, :jml_utuh, :jml_retak, :total, :id_populasi)");
+        sql.bindValue(":id_produksi", ui->iDProduksiLineEdit->text());
+        sql.bindValue(":tgl_produksi", ui->tanggalProduksiDateEdit->date());
+        sql.bindValue(":jml_utuh", jmlUtuh);
+        sql.bindValue(":jml_retak", jmlRetak);
+        sql.bindValue(":total", total);
+        sql.bindValue(":id_populasi", id_populasi);
+
+        ui->totalLineEdit->setText(QString::number(total));
+
+        if(sql.exec()){
+            qDebug()<<"Data berhasil di simpan";
+        }else{
+            qDebug()<<sql.lastError().text();
+        }
+
+        loadTabelProduksi();
+        clearFormInput();
     }
 
-    loadTabelProduksi();
-    clearFormInput();
 }
 
 

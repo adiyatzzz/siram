@@ -43,20 +43,40 @@ FormPakan::~FormPakan()
 void FormPakan::on_pushButton_clicked()
 {
     QSqlQuery sql(koneksiDB);
-    sql.prepare("INSERT INTO pakan (kd_pakan, nama_pakan, jenis_pakan, jml_pakan) VALUE(:kd_pakan, :nama_pakan, :jenis_pakan, :jml_pakan)");
-    sql.bindValue(":kd_pakan", ui->kodePakanLineEdit->text());
-    sql.bindValue(":nama_pakan", ui->namaPakanLineEdit->text());
-    sql.bindValue(":jenis_pakan", ui->jenisPakanLineEdit->text());
-    sql.bindValue(":jml_pakan", ui->jumlahPakanLineEdit->text());
 
-    if(sql.exec()){
-        qDebug()<<"Data berhasil di simpan";
-    }else{
-        qDebug()<<sql.lastError().text();
+    if(formChecker->isFieldEmpty(this, ui->kodePakanLineEdit, "Kode Pakan Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->namaPakanLineEdit, "Nama Pakan Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jenisPakanLineEdit, "Jenis Pakan Belum Di Isi") ||
+        formChecker->isFieldEmpty(this, ui->jumlahPakanLineEdit, "Jumlah Pakan Belum Di Isi") ){
+        return;
     }
 
-    loadTabelPakan();
-    clearFormInput();
+    sql.prepare("SELECT * FROM pakan WHERE kd_pakan = '"+ ui->kodePakanLineEdit->text() + "'");
+    sql.exec();
+
+    if (sql.next()) {
+        QMessageBox::information(this, "Warning", "Kode Pakan Sudah Digunakan");
+        ui->kodePakanLineEdit->setText(sql.value(0).toString());
+        ui->namaPakanLineEdit->setText(sql.value(1).toString());
+        ui->jenisPakanLineEdit->setText(sql.value(2).toString());
+        ui->jumlahPakanLineEdit->setText(sql.value(3).toString());
+    } else {
+        sql.prepare("INSERT INTO pakan (kd_pakan, nama_pakan, jenis_pakan, jml_pakan) VALUE(:kd_pakan, :nama_pakan, :jenis_pakan, :jml_pakan)");
+        sql.bindValue(":kd_pakan", ui->kodePakanLineEdit->text());
+        sql.bindValue(":nama_pakan", ui->namaPakanLineEdit->text());
+        sql.bindValue(":jenis_pakan", ui->jenisPakanLineEdit->text());
+        sql.bindValue(":jml_pakan", ui->jumlahPakanLineEdit->text());
+
+        if(sql.exec()){
+            qDebug()<<"Data berhasil di simpan";
+        }else{
+            qDebug()<<sql.lastError().text();
+        }
+
+        loadTabelPakan();
+        clearFormInput();
+    }
+
 }
 
 
